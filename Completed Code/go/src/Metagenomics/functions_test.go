@@ -116,7 +116,7 @@ func TestBrayCurtis(t *testing.T) {
 		outcome := BrayCurtisDistance(test.frequencyMap1, test.frequencyMap2)
 
 		var numDigits uint = 4
-
+		//*** hard to compare the complete float
 		if roundFloat(outcome, numDigits) != roundFloat(test.answer, numDigits) {
 			t.Errorf("Error! For input test dataset %d, your code gives %v, and the correct answer is %v", i, outcome, test.answer)
 		} else {
