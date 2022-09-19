@@ -166,6 +166,48 @@ func TestJaccard(t *testing.T) {
 
 }
 
+func TestListMersennePrimes(t *testing.T) {
+	type test struct {
+		n      int
+		output []int
+	}
+	inputDirectory := "tests/MersennePrimes/input/"
+	outputDirectory := "tests/MersennePrimes/output/"
+
+	inputFiles := ReadFilesFromDirectory(inputDirectory)
+	outputFiles := ReadFilesFromDirectory(outputDirectory)
+
+	//assert that files are non-empty and have the same length
+	AssertEqualAndNonzero(len(inputFiles), len(outputFiles))
+
+	//we now will need to create our array of tests
+	tests := make([]test, len(inputFiles))
+
+	//first, range through the input and output files and set the test values
+	for i := range inputFiles {
+		tests[i].n = ReadIntegerFromFile(inputDirectory, inputFiles[i])
+		tests[i].output = ReadIntArrayFromFile(outputDirectory, outputFiles[i])
+	}
+
+	//are the tests correct?
+	for i, test := range tests {
+		outcome := ListMersennePrimes(test.n)
+		flag := true
+		for j := range outcome {
+			if outcome[j] != test.output[j] {
+				flag = false
+				break
+			}
+		}
+		if flag {
+			fmt.Println("Correct! When the intput is", test.n, "the primers are", test.output)
+		} else {
+			t.Errorf("Error! For input test dataset %d, your code gives %v, and the correct answer is %v", i, outcome, test.output)
+		}
+	}
+
+}
+
 func ReadFloatFromFile(directory string, file os.FileInfo) float64 {
 	//now, consult the associated output file.
 	fileName := file.Name() //grab file name
@@ -210,6 +252,29 @@ func ReadIntegerFromFile(directory string, file os.FileInfo) int {
 	}
 
 	return answer
+}
+
+func ReadIntArrayFromFile(directory string, file os.FileInfo) []int {
+	fileName := file.Name() //grab file name
+
+	//now, read out the file
+	fileContents, err := ioutil.ReadFile(directory + fileName)
+	if err != nil {
+		panic(err)
+	}
+
+	//trim out extra space
+	outputLines := strings.Split(strings.TrimSpace(strings.Replace(string(fileContents), "\r\n", "\n", -1)), "\n")
+	output := strings.Split(outputLines[0], " ")
+	intOutput := make([]int, len(output))
+	for i := range output {
+		intOutput[i], err = strconv.Atoi(output[i])
+		if err != nil {
+			panic(err)
+		}
+	}
+	return intOutput
+
 }
 
 func ReadFrequencyMapFromFile(directory string, inputFile os.FileInfo) map[string]int {
@@ -315,5 +380,3 @@ func roundFloat(val float64, precision uint) float64 {
 	ratio := math.Pow(10, float64(precision))
 	return math.Round(val*ratio) / ratio
 }
-
-//TheRealChanges
