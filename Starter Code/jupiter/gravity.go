@@ -13,3 +13,15 @@ func Distance(p1, p2 OrderedPair) float64 {
 	deltaY := p1.y - p2.y
 	return math.Sqrt(deltaX*deltaX + deltaY*deltaY)
 }
+
+func SimulateGravity(initialUniverse Universe, numGen int, time float64) []Universe {
+	timepoints := make([]Universe, numGen+1)
+	timepoints[0] = initialUniverse
+	for i := 1; i <= numGen; i++ {
+		timepoints[i] = UpdateUniverse(timepoints[i-1])
+	}
+}
+
+func UpdateUniverse(currentUniverse Universe, time float64) Universe {
+
+}
