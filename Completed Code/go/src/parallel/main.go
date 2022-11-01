@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"runtime"
-	"sync"
 	"time"
 )
 
@@ -17,9 +16,16 @@ func main() {
 		  fmt.Println(factorial1 * factorial2)
 	*/
 
-	a := []int{1, 2, 4, 523, 5, 1, 25, 51, 2, 4, 32, 44, 31, 51}
-	results := MaxMultiProcs(a, 3)
-	fmt.Println(results)
+	c := make(chan int)
+
+	go Push(10, c)
+
+	// for k := 0; k < n; k++ {
+	// 	go Push(k, c)
+	// }
+
+	fmt.Println(<-c)
+
 }
 
 func SummingParallel() {
@@ -206,14 +212,7 @@ func MaxOneProc(a []int, c chan int) {
 	c <- max
 }
 
-func main() {
-	var wg sync.WaitGroup
-	for i := range foo {
-		wg.Add(1)
-		go func() {
-			defer wg.Done(1)
-			f(bar)
-		}()
-	}
-	wg.Wait()
+func Push(k int, c chan int) {
+	time.Sleep(time.Second)
+	c <- k
 }
