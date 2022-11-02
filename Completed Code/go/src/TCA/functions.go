@@ -70,6 +70,9 @@ func UpdateVelocity(currentlane *lane, k int) int {
 
 func UpdatePosition(currentlane *lane, k int) int {
 	p := currentlane.vehicles[k].position + currentlane.vehicles[k].velocity
+	if p > 1000 {
+		p = p - 1000
+	}
 	return p
 }
 

@@ -19,6 +19,7 @@ func main() {
 	for i := 0; i < 10; i++ {
 		vehicles[i].velocity = 1
 		vehicles[i].position = rand.Intn(1000)
+		fmt.Println(vehicles[i].position)
 	}
 
 	initiallane.vehicles = vehicles
@@ -27,13 +28,14 @@ func main() {
 	fmt.Println("Simulating system.")
 
 	timeStep := 1
-	numGens := 20
+	numGens := 50
+
 	timePoints := SimulateLanes(initiallane, numGens, timeStep)
 
 	fmt.Println("Boids has been simulated!")
 	fmt.Println("Ready to draw images.")
 
-	canvasWidth := 20
+	canvasWidth := 1000
 	imageFrequency := 1
 
 	images := AnimateSystem(timePoints, canvasWidth, imageFrequency)

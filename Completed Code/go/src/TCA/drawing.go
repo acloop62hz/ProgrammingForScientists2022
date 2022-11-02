@@ -30,9 +30,9 @@ func DrawToCanvas(u lane, canvasWidth int) image.Image {
 	// range over all the boids and draw them.
 	for _, b := range u.vehicles {
 		c.SetFillColor(canvas.MakeColor(0, 0, 0))
-		cx := (b.position / u.length) * canvasWidth
+		cx := (float64(b.position) / float64(u.length)) * float64(canvasWidth)
 		cy := canvasWidth / 2
-		r := 5.0
+		r := 2.0
 		c.Circle(float64(cx), float64(cy), r)
 		c.Fill()
 	}
