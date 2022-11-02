@@ -28,11 +28,11 @@ func ImagesToGIF(imglist []image.Image, filename string) {
 	var g gif.GIF
 	g.Delay = make([]int, len(imglist))
 	g.Image = make([]*image.Paletted, len(imglist))
-	g.LoopCount = 10
+	g.LoopCount = 100
 
 	for i := range imglist {
 		g.Image[i] = ImageToPaletted(imglist[i])
-		g.Delay[i] = 1
+		g.Delay[i] = 100
 	}
 
 	gif.EncodeAll(w, &g)
@@ -57,27 +57,27 @@ func init() {
 }
 
 func ImageToPaletted(img image.Image) *image.Paletted {
-        pm, ok := img.(*image.Paletted)
-        if !ok {
-                b := img.Bounds()
-                pm = image.NewPaletted(b, palette.WebSafe)
-                var prevC color.Color = nil
-                var idx uint8
-                var ok bool
-                for y := b.Min.Y; y < b.Max.Y; y++ {
-                        for x := b.Min.X; x < b.Max.X; x++ {
-                                c := img.At(x, y)
-                                if c != prevC {
-                                        if idx, ok = mapOfColorIndices[c]; !ok {
-                                                idx = uint8(pm.Palette.Index(c))
-                                                mapOfColorIndices[c] = idx
-                                        }
-                                        prevC = c
-                                }
-                                i := pm.PixOffset(x, y)
-                                pm.Pix[i] = idx
-                        }
-                }
-        }
-        return pm
+	pm, ok := img.(*image.Paletted)
+	if !ok {
+		b := img.Bounds()
+		pm = image.NewPaletted(b, palette.WebSafe)
+		var prevC color.Color = nil
+		var idx uint8
+		var ok bool
+		for y := b.Min.Y; y < b.Max.Y; y++ {
+			for x := b.Min.X; x < b.Max.X; x++ {
+				c := img.At(x, y)
+				if c != prevC {
+					if idx, ok = mapOfColorIndices[c]; !ok {
+						idx = uint8(pm.Palette.Index(c))
+						mapOfColorIndices[c] = idx
+					}
+					prevC = c
+				}
+				i := pm.PixOffset(x, y)
+				pm.Pix[i] = idx
+			}
+		}
+	}
+	return pm
 }

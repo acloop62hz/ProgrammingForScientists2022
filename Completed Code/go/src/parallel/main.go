@@ -206,3 +206,90 @@ func Factorial(n int) int {
 	}
 	return prod
 }
+
+//homework
+
+func MaxMultiProcs(a []int, numProcs int) int {
+	n := len(a)
+	c := make(chan int)
+	max := a[0]
+
+	for i := 0; i < numProcs; i++ {
+		start := i * (n / numProcs)
+		end := (i + 1) * (n / numProcs)
+		if i < numProcs-1 {
+			go MaxOneProc(a[start:end], c)
+		} else {
+			go MaxOneProc(a[start:], c)
+		}
+	}
+
+	for i := 0; i < numProcs; i++ {
+		t := <-c
+		if t > max {
+			max = t
+		}
+	}
+	return max
+}
+
+func MaxOneProc(a []int, c chan int) {
+	max := a[0]
+	for i := 1; i < len(a); i++ {
+		if a[i] > max {
+			max = a[i]
+		}
+	}
+	c <- max
+}
+
+func Push(k int, c chan int) {
+	time.Sleep(time.Second)
+	c <- k
+}
+
+func SkewArrayParallel(genomes [][]rune, numProcs int) [][]int {
+	n := len(genomes)
+	c := make(chan []int, n)
+	for i := 0; i < numProcs; i++ {
+		start := i * n / numProcs
+		end := (i + 1) * n / numProcs
+		if i == numProcs-1 {
+			go SkewArrayOneCore(genomes[start:end], c)
+		} else {
+			go SkewArrayOneCore(genomes[start:], c)
+		}
+	}
+	skewArrays := make([][]int, n)
+	for i := 0; i < n; i++ {
+		skewArrays[i] = <-c
+	}
+	return skewArrays
+}
+
+func SkewArrayOneCore(genomes [][]rune, c chan []int) {
+	n := len(genomes)
+	for i := 0; i < n; i++ {
+		c <- SkewArray(genomes[i])
+	}
+}
+
+func SkewArray(genome []rune) []int {
+	n := len(genome)
+	sa := make([]int, n+1)
+	sa[0] = 0
+	for i := 1; i <= n; i++ {
+		sa[i] = sa[i-1] + Skew(genome[i-1])
+	}
+	return sa
+}
+
+func Skew(s rune) int {
+	if s == 'G' {
+		return 1
+	} else if s == 'C' {
+		return -1
+	} else {
+		return 0
+	}
+}

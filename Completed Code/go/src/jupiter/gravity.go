@@ -158,3 +158,29 @@ func Distance(p1, p2 OrderedPair) float64 {
 	deltaY := p1.y - p2.y
 	return math.Sqrt(deltaX*deltaX + deltaY*deltaY)
 }
+
+func AverageSpeed(uList []Universe) []float64 {
+	if uList == nil {
+		panic("Empty list")
+	}
+	numBodies := len(uList[0].bodies)
+	avgSpd := make([]float64, numBodies)
+	for bodyId := range uList[0].bodies {
+		avgSpd[bodyId] = IthAvgSpd(uList, bodyId)
+	}
+	return avgSpd
+}
+
+func IthAvgSpd(uList []Universe, id int) float64 {
+	sumSpd := 0.0
+	numUniverse := len(uList)
+	for _, uValue := range uList {
+		sumSpd += CalSpeed(uValue.bodies[id])
+	}
+	return sumSpd / float64(numUniverse)
+}
+
+func CalSpeed(b Body) float64 {
+	speedVal := math.Sqrt(b.velocity.x*b.velocity.x + b.velocity.y*b.velocity.y)
+	return speedVal
+}
