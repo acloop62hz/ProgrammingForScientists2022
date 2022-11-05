@@ -5,6 +5,8 @@ package main
 import (
 	"math"
 	"math/rand"
+	"runtime"
+	"time"
 )
 
 // CopyBoard is a Board method that makes a deep copy of a board and returns
@@ -61,17 +63,60 @@ func (b *Board) UpdateBoard() *Board {
 
 // Diffuse is a Board method that diffuses each Particle in the Board over a single
 // time step.
-func (b *Board) Diffuse() {
-	for _, p := range b.particles {
-		p.RandStep()
+func (b *Board) Diffuse(isparallel bool) {
+	if isparallel {
+		numProcs := runtime.NumCPU()
+		b.DiffuseParallel(numProcs)
+	} else {
+		for _, p := range b.particles {
+			source := rand.NewSource(time.Now().UnixNano())
+			generator := rand.New(source)
+			p.RandStep(generator)
+		}
 	}
+
+}
+
+func (b *Board) DiffuseParallel(numProcs int) {
+	n := len(b.particles)
+
+	finished := make(chan bool, numProcs)
+
+	for i := 0; i < numProcs; i++ {
+		start := i * (n / numProcs)
+		end := (i + 1) * (n / numProcs)
+		if i < numProcs-1 {
+			source := rand.NewSource(time.Now().UnixNano())
+			generator := rand.New(source)
+			go DiffuseOneCore(b.particles[start:end], generator, finished)
+		} else {
+			source := rand.NewSource(time.Now().UnixNano())
+			generator := rand.New(source)
+			go DiffuseOneCore(b.particles[start:], generator, finished)
+
+		}
+	}
+
+	for i := 0; i < numProcs; i++ {
+		<-finished
+	}
+}
+
+func DiffuseOneCore(particles []*Particle, generator *(rand.Rand), finished chan bool) {
+
+	for _, p := range particles {
+		p.RandStep(generator)
+	}
+
+	finished <- true
 }
 
 // RandStep is a Particle method that moves the Particle by the Particle's diffusion rate
 // parameter in a randomly chosen direction.
-func (p *Particle) RandStep() {
+
+func (p *Particle) RandStep(generator *(rand.Rand)) {
 	stepLength := p.diffusionRate
-	angle := rand.Float64() * 2 * math.Pi
+	angle := generator.Float64() * 2 * math.Pi
 	p.position.x += stepLength * math.Cos(angle)
 	p.position.y += stepLength * math.Sin(angle)
 }
