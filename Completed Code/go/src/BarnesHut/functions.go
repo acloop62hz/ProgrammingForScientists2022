@@ -25,12 +25,29 @@ func (currentUniverse *Universe) UpdateUniverse(time, theta float64) *Universe {
 	//range over all stars in the universe and update their acceleration,
 	//velocity, and position
 	for i := range newUniverse.stars {
-		newUniverse.stars[i].UpdateAcceleration(currentUniverse)
+		newUniverse.stars[i].UpdateAcceleration(currentUniverse,theta)
 		newUniverse.stars[i].UpdateVelocity(time)
 		newUniverse.stars[i].UpdatePosition(time)
 	}
 
 	return &newUniverse
+}
+
+func (star *Star) UpdateAcceleration(currentUniverse *Universe, theta float64) {
+	var quadTree *QuadTree
+	*quadTree = currentUniverse.BuildQuadtree()
+
+	force := ComputeNetForce(quadTree, star)
+
+	star.acceleration.x = force.x/star.mass
+	star.acceleration.y = force.y/star.mass
+	
+}
+
+func ComputeNetForce(quadTree *QuadTree, star *Star) OrderedPair{
+	for i := 0; i < 4; i++{
+		if quadTree.
+	}
 }
 
 //CopyUniverse
@@ -101,9 +118,11 @@ func (proot *Node) InsertStar(star *Star) {
 	if proot.children != nil {
 		index := proot.FindInsertIndex(star)
 		proot.children[index].InsertStar(star)
+		proot.UpdateNode(proot.children[index])
 	} else {
 		if proot.star == nil {
 			proot.star = star
+			return
 		} else {
 			prootStar := proot.star
 			*proot = proot.MakeDummyNode()
@@ -111,6 +130,10 @@ func (proot *Node) InsertStar(star *Star) {
 			proot.InsertStar(star)
 		}
 	}
+}
+
+func (proot *Node) UpdateNode(child *Node){
+	proot.
 }
 
 func (proot *Node) MakeDummyNode() Node {
