@@ -50,11 +50,11 @@ func main() {
 		jupiterSystem.stars = []*Star{&jupiter, &io, &europa, &ganymede, &callisto}
 
 		// now evolve the universe: feel free to adjust the following parameters.
-		numGens := 50000
+		numGens := 10000
 		time := 50.0
 		theta := 0.5
 		canvasWidth := 1000
-		frequency := 10
+		frequency := 300
 		scalingFactor := 1e1
 
 		fmt.Println("checkPoint1")
@@ -70,22 +70,22 @@ func main() {
 		fmt.Println("GIF drawn.")
 
 	} else if universeType == "galaxy" {
-		g0 := InitializeGalaxy(500, 4e21, 7e22, 2e22)
+		g0 := InitializeGalaxy(50, 4e21, 7e22, 2e22)
 		width := 1.0e23
 		galaxies := []Galaxy{g0}
 
 		initialUniverse := InitializeUniverse(galaxies, width)
 
 		// now evolve the universe: feel free to adjust the following parameters.
-		numGens := 500
-		time := 2e14
+		numGens := 10000
+		time := 2e15
 		theta := 0.5
 
 		timePoints := BarnesHut(initialUniverse, numGens, time, theta)
 
 		fmt.Println("Simulation run. Now drawing images.")
 		canvasWidth := 1000
-		frequency := 1
+		frequency := 300
 		scalingFactor := 1e11 // a scaling factor is needed to inflate size of stars when drawn because galaxies are very sparse
 		imageList := AnimateSystem(timePoints, canvasWidth, frequency, scalingFactor)
 
@@ -101,8 +101,8 @@ func main() {
 		// them toward each other to collide.
 		// be careful: if you push them too fast, they'll just fly through each other.
 		// too slow and the black holes at the center collide and hilarity ensues.
-		g0.Push(-5e6, 5e6)
-		g1.Push(5e6, -5e6)
+		g0.Push(-4e3-8e2, 5e3+8e2)
+		g1.Push(4e3+8e2, -5e3-8e2)
 
 		width := 1.0e23
 		galaxies := []Galaxy{g0, g1}
@@ -110,20 +110,20 @@ func main() {
 		initialUniverse := InitializeUniverse(galaxies, width)
 
 		// now evolve the universe: feel free to adjust the following parameters.
-		numGens := 5000
-		time := 2e14
+		numGens := 20000
+		time := 4e14
 		theta := 0.5
 
 		timePoints := BarnesHut(initialUniverse, numGens, time, theta)
 
 		fmt.Println("Simulation run. Now drawing images.")
 		canvasWidth := 1000
-		frequency := 10
+		frequency := 250
 		scalingFactor := 1e11 // a scaling factor is needed to inflate size of stars when drawn because galaxies are very sparse
 		imageList := AnimateSystem(timePoints, canvasWidth, frequency, scalingFactor)
 
 		fmt.Println("Images drawn. Now generating GIF.")
-		gifhelper.ImagesToGIF(imageList, "collision")
+		gifhelper.ImagesToGIF(imageList, "collision2")
 		fmt.Println("GIF drawn.")
 
 	}

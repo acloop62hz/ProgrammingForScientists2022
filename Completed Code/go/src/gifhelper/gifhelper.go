@@ -28,11 +28,11 @@ func ImagesToGIF(imglist []image.Image, filename string) {
 	var g gif.GIF
 	g.Delay = make([]int, len(imglist))
 	g.Image = make([]*image.Paletted, len(imglist))
-	g.LoopCount = 100
+	g.LoopCount = 10
 
 	for i := range imglist {
 		g.Image[i] = ImageToPaletted(imglist[i])
-		g.Delay[i] = 100
+		g.Delay[i] = 1
 	}
 
 	gif.EncodeAll(w, &g)

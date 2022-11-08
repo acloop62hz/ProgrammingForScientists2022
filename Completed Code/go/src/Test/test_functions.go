@@ -2,6 +2,15 @@ package main
 
 import "fmt"
 
+func BuildUniverse() *Universe {
+	var a Universe
+	a.stars = make([]*Star, 1)
+	var s Star
+	a.stars[0] = &s
+	a.stars[0].blue = 9
+	return &a
+}
+
 func (currentUniverse *Universe) BuildQuadtree() QuadTree {
 	//initialize root node
 	var root Node

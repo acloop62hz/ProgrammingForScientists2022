@@ -52,3 +52,15 @@ type Quadrant struct {
 	y     float64 //bottom right corner y coordinate
 	width float64
 }
+
+// For test functions. Used for print the structure of the tree
+type treeNode struct {
+	isStarNil  int
+	isChildNil int
+	position   OrderedPair
+	sector     OrderedPair
+	width      float64
+	starMass   float64
+}
+
+type Queue []*Node
