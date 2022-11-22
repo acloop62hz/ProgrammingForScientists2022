@@ -28,7 +28,7 @@ func DrawPNG(board Board, cellWidth int, filename string) {
 			} else {
 				//c.SetFillColor(four)
 				fmt.Println(board[i][j])
-				panic("Error: Out of range value " + string(board[i][j].coinNumber) + " in board when drawing board.")
+				//panic("Error: Out of range value " + string(board[i][j].coinNumber) + " in board when drawing board.")
 			}
 			x := j * cellWidth
 			y := i * cellWidth

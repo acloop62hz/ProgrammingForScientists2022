@@ -13,3 +13,11 @@ type OrderPair struct {
 }
 
 type Queue []OrderPair
+
+type message struct {
+	bottomFall  []int
+	upperFall   []int
+	bottomIndex int
+	upperIndex  int
+	done        bool
+}

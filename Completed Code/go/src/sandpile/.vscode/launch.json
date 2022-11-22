@@ -1,0 +1,20 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Golang",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${fileDirname}",
+            "env": {
+                "GOPATH": "D:/cmu_S1/02601/go;D:/cmu_S1/02601/ProgrammingForScientists2022/Completed Code/go",   //调整为实际设置目录
+                "GOROOT": "D:/softwares/Go",  //调整为实际设置目录
+            },
+            "args": []
+        }
+    ]
+}
