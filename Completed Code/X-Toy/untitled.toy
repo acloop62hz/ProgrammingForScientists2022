@@ -1,0 +1,146 @@
+/******************************************************************************
+ *  Description: Encryption and Decryption fro ONETIMEPAD
+ *  Input:seed, n numbers, input words(sometimes another words)
+ *  Output:encrypted or decrypted words as required
+ ******************************************************************************/
+
+function main
+//input seed for encryption or decryption
+//return address
+//output:encrypted or decrypted words as required
+
+// read seed and n number stor in 
+//memory 00 and 01 seperately
+10: 82FF   read R[2]                     // R2: seed
+11: 83FF   read R[3]                     // R3: number
+12: 9200   M[00] <- R[2]                 
+13: 9200   M[00] <- R[2]                 //M[00] for seed,because R2 may change 
+14: 9301   M[01] <- R[3]                 //M[01] for words number,R3 may change
+15: 7101   R[1] <- 0001                  //set constant value R1 ->1
+
+//assign adress rome A0 to sore inputwords,in slides we need at most 32 bits
+16: 7AA0   R[A] <- 00A0                  //assign address
+
+//call function Read and now memory from A0 has been sored of input
+17: FF6A   R[F] <- PC; goto 6A           //call function, read input
+18: 8301   R[3] <- M[01]                 //reset R3 to be n from memory 01
+19: 7AC0   R[A] <- 00C0                  // assign new input address
+
+//from here,we test if we need to perform Encryption and Decryption
+1A: D21E   if (R[2] > 0) goto 1E         //seed >0 ,we perform Encryption
+
+1B: FF6A   R[F] <- PC; goto 6A           //seed =0 we perform Decryption
+1C: 8301   R[3] <- M[01]                 
+1D: C026   goto 26                       
+
+// For Encryption, we need to print 0,n and words
+//first print 0
+1E: 90FF   write R[0]                    // R0 is always 0
+1F: B20A   M[R[A]] <- R[2]               
+
+//generate randomint
+20: C326   if (R[3] == 0) goto 26        //loop
+21: FF7A   R[F] <- PC; goto 7A           //call randomInt function for n numbers
+
+//randomint words stored at A memory address one by one
+22: BD0A   M[R[A]] <- R[D]               
+23: 1AA1   R[A] <- R[A] + R[1]           //to get new memory address
+24: 2331   R[3] <- R[3] - R[1]           //need n numbers
+25: C020   goto 20                       
+
+// exete XOR
+26: 8301   R[3] <- M[01]                 //reset R3 to be n
+27: FF5A   R[F] <- PC; goto 5A           //XOR
+
+//general commands
+28: 8301   R[3] <- M[01]                 //reset R3
+29: 93FF   write R[3]                    //whether Encryption and Decryption - n
+2A: 7EA0   R[E] <- 00A0                  //get address for output
+2B: FF8A   R[F] <- PC; goto 8A           
+
+2C: 8301   R[3] <- M[01]                 
+2D: C230   if (R[2] == 0) goto 30        //reset R3 for output
+2E: 7EC0   R[E] <- 00C0                  //get address for key
+2F: FF8A   R[F] <- PC; goto 8A           
+30: 0000   halt                          //stop
+
+
+
+
+function XOR
+// Input:n numbers ,input words for XOR
+// give words address to XOR one by one             
+// Output:n words 
+// get address to store these words          
+
+// get two words to be exeted
+5A: 7AA0   R[A] <- 00A0                  //store in memory from A0
+5B: 7BC0   R[B] <- 00C0                  //store in memory from A0
+
+//loop , XOR, one by one
+5C: C365   if (R[3] == 0) goto 65        
+
+//each time get RC from RA
+5D: AC0A   R[C] <- M[R[A]]               
+//each time get RC from RA
+5E: AD0B   R[D] <- M[R[B]]               
+
+5F: 4CCD   R[C] <- R[C] ^ R[D]           //exete XOR one by one
+60: BC0A   M[R[A]] <- R[C]               // over write in RA
+
+61: 1AA1   R[A] <- R[A] + R[1]           //next address in RA
+62: 1BB1   R[B] <- R[B] + R[1]           //next address in RB
+63: 2331   R[3] <- R[3] - R[1]           // exte n times
+64: C05C   goto 5C                       
+65: EF00   goto R[F]                     
+
+function Read
+//Input:n numbers
+//Output : n words 
+
+6A: C370   if (R[3] == 0) goto 70        //read n times one by one 
+6B: 8BFF   read R[B]                     //from stdin
+6C: BB0A   M[R[A]] <- R[B]               //store at address assigned by RA
+
+6D: 1AA1   R[A] <- R[A] + R[1]           //next address
+6E: 2331   R[3] <- R[3] - R[1]           // n times
+6F: C06A   goto 6A                       
+70: EF00   goto R[F]                     
+
+function RandomInt
+\\ Input:seed
+\\Output:random int
+
+\\set register R5 is a in equation
+\\set R6 to get seed
+7A: 7511   R[5] <- 0011                                
+7B: 8600   R[6] <- M[00]                 
+
+7C: 7C7D   R[C] <- 007D                  //for loop
+7D: C581   if (R[5] == 0) goto 81        
+7E: 1DD6   R[D] <- R[D] + R[6]           //add seed every time
+7F: 2551   R[5] <- R[5] - R[1]           //until n times
+80: EC00   goto R[C]                     
+
+//c =1 in equation and RD to next
+81: 1DD1   R[D] <- R[D] + R[1]           
+82: EF00   goto R[F]                     //End
+
+function Print
+// Input:use R3 to store number, use RE to store address           
+// Output: answer         
+
+8A: C390   if (R[3] == 0) goto 90        loop
+
+// read bit one by one from RE,R4 is output register
+8B: A40E   R[4] <- M[R[E]]               
+8C: 94FF   write R[4]                    
+
+8D: 2331   R[3] <- R[3] - R[1]           // loop until r3=0
+8E: 1EE1   R[E] <- R[E] + R[1]           //RE next address
+8F: C08A   goto 8A                       
+90: EF00   goto R[F]                     //END
+
+
+
+               
