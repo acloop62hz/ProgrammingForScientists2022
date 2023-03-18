@@ -12,7 +12,7 @@ import (
 	"os"
 )
 
-//ImagesToGIF() takes a slice of images and uses them to generate an animated GIF
+// ImagesToGIF() takes a slice of images and uses them to generate an animated GIF
 // with the name "filename.out.gif" where filename is an input parameter.
 func ImagesToGIF(imglist []image.Image, filename string) {
 
@@ -28,11 +28,11 @@ func ImagesToGIF(imglist []image.Image, filename string) {
 	var g gif.GIF
 	g.Delay = make([]int, len(imglist))
 	g.Image = make([]*image.Paletted, len(imglist))
-	g.LoopCount = 10
+	g.LoopCount = 100
 
 	for i := range imglist {
 		g.Image[i] = ImageToPaletted(imglist[i])
-		g.Delay[i] = 1
+		g.Delay[i] = 10
 	}
 
 	gif.EncodeAll(w, &g)
